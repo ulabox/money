@@ -1,0 +1,29 @@
+{
+    "name": "ulabox/money",
+    "description": "Yet another PHP implementation of the Money value object using BCMath",
+    "keywords": ["Money", "Value Object", "BCMath"],
+    "homepage": "https://github.com/ulabox/money",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Albert Casademont",
+            "email": "albert@ulabox.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"        
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Money\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Money\\": "tests/"
+        }
+    }
+}
