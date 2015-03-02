@@ -61,4 +61,30 @@ final class CurrencyTest extends \PHPUnit_Framework_TestCase
         $c2 = Currency::fromCode('USD');
         $this->assertFalse($c1->equals($c2));
     }
+
+    /**
+     * @covers ::equals
+     */
+    public function testToUpper()
+    {
+        $c1 = Currency::fromCode('EUR');
+        $c2 = Currency::fromCode('eur');
+        $this->assertTrue($c1->equals($c2));
+    }
+
+    /**
+     * @expectedException Money\InvalidArgumentException
+     */
+    public function testNonStringCode()
+    {
+        Currency::fromCode(1234);
+    }
+
+    /**
+     * @expectedException Money\InvalidArgumentException
+     */
+    public function testNon3LetterCode()
+    {
+        Currency::fromCode('FooBar');
+    }
 }

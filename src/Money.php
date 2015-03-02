@@ -121,7 +121,7 @@ final class Money
      */
     public function add(Money $addend)
     {
-        $this->assertSameCurrencyThan($addend);
+        $this->assertSameCurrencyAs($addend);
 
         $amount = bcadd($this->amount, $addend->amount, self::SCALE);
 
@@ -138,7 +138,7 @@ final class Money
      */
     public function subtract(Money $subtrahend)
     {
-        $this->assertSameCurrencyThan($subtrahend);
+        $this->assertSameCurrencyAs($subtrahend);
 
         $amount = bcsub($this->amount, $subtrahend->amount, self::SCALE);
 
@@ -324,7 +324,7 @@ final class Money
      */
     private function compareTo(Money $other)
     {
-        $this->assertSameCurrencyThan($other);
+        $this->assertSameCurrencyAs($other);
 
         return bccomp($this->amount, $other->amount);
     }
@@ -350,10 +350,10 @@ final class Money
      *
      * @throws InvalidArgumentException If $other has a different currency
      */
-    private function assertSameCurrencyThan(Money $other)
+    private function assertSameCurrencyAs(Money $other)
     {
         if (!$this->hasSameCurrencyAs($other)) {
-            throw new \InvalidArgumentException('Currencies must be identical');
+            throw new InvalidArgumentException('Currencies must be identical');
         }
     }
 
@@ -367,7 +367,7 @@ final class Money
     private static function assertNumeric($value)
     {
         if (!is_numeric($value)) {
-            throw new \InvalidArgumentException('Amount must be a valid numeric value');
+            throw new InvalidArgumentException('Amount must be a valid numeric value');
         }
     }
 }

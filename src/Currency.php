@@ -14,7 +14,7 @@ namespace Money;
 final class Currency
 {
     /**
-     * Currency code
+     * Currency 3 letter ISO code
      *
      * @var string
      */
@@ -25,11 +25,7 @@ final class Currency
      */
     private function __construct($code)
     {
-        if (!is_string($code)) {
-            throw new \InvalidArgumentException('Currency code should be a string');
-        }
-
-        $this->code = $code;
+        $this->code = strtoupper($code);
     }
 
     /**
@@ -41,6 +37,10 @@ final class Currency
      */
     public static function fromCode($code)
     {
+        if (!is_string($code) || strlen($code) !== 3) {
+            throw new InvalidArgumentException('Currency code should be 3 letter ISO code');
+        }
+
         return new self($code);
     }
 
@@ -67,6 +67,6 @@ final class Currency
     }
 
     public function __toString() {
-        return $this->code();
+        return $this->code;
     }
 }

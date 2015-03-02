@@ -46,7 +46,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Money\InvalidArgumentException
      */
     public function testNonNumericStringsThrowException()
     {
@@ -96,7 +96,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Money\InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeAdded()
     {
@@ -136,7 +136,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Money\InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeSubtracted()
     {
@@ -161,7 +161,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Money\InvalidArgumentException
      */
     public function testInvalidMultiplicationOperand()
     {
@@ -284,7 +284,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException Money\InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeCompared()
     {

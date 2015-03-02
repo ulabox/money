@@ -40,12 +40,42 @@ assert($fifteenEUR->isGreaterThan($tenEUR));
 asset($fifteenEUR->equals(Money::EUR('15.00')));
 
 ```
+## Integration with Doctrine 2.5
+
+Starting from version 2.5 Doctrine supports working with Value Objects in what they call [Embeddables][5]. Bear in mind that this Money object has also a Currency VO inside, this is an embeddable inside an embeddable. Doctrine should work just fine with nested embeddables.
+
+We suggest mapping the `amount` field to a `decimal` type. Decimal fields don't lose precision and are converted to a string type in PHP by Doctrine, exactly what we need when working with BCMath. The currency `code` field should be mapped to a `string` type. This is an example schema of a `Product` entity that has a `price` Money field.
+
+```
+Product:
+  type: entity
+  embedded:
+    price:
+      class: Money\Money
+
+Money\Money:
+  type: embeddable
+  fields:
+    amount: { type: decimal, precision: 10, scale: 2 }
+  embedded:
+    currency:
+      class: Money\Currency
+
+Money\Currency
+  type: embeddable
+  fields:
+    code: { type: string, length: 3 }
+
+```
+ 
+## Disclaimer
+
+We aim to keep this library as simple as possible. That means we don't see the need of having plenty of calculation operations inside the Money class, keep that in mind if you plan to spend some valuable time in a PR! But of course, this can change as we see fit :p
+
+We don't check the currency code against a list of valid ISO codes as we have some fake currencies in our system that use custom currency codes.
 
 [1]: https://getcomposer.org
 [2]: https://github.com/mathiasverraes/money
 [3]: https://github.com/commerceguys/pricing
 [4]: https://wiki.php.net/rfc/gmp-floating-point
-
-## Disclaimer
-
-We aim to keep this library as simple as possible. That means we don't see the need of having plenty of calculation operations inside the Money class, keep that in mind if you plan to spend some valuable time in a PR! But of course, this can change as we see fit :p
+[5]: http://doctrine-orm.readthedocs.org/en/latest/tutorials/embeddables.html
