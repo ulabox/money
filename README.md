@@ -37,7 +37,7 @@ $fifteenEUR = $twentyEUR->subtract(Money::EUR('5.00'));
 
 assert($tenEUR->isLessThan($twentyEUR));
 assert($fifteenEUR->isGreaterThan($tenEUR));
-asset($fifteenEUR->equals(Money::EUR('15.00')));
+assert($fifteenEUR->equals(Money::EUR('15.00')));
 
 ```
 ## Integration with Doctrine 2.5

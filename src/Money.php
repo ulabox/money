@@ -14,7 +14,7 @@ namespace Money;
 final class Money
 {
     /**
-     * The precision scale used in BCMath calculations
+     * The scale used in BCMath calculations
      */
     const SCALE = 4;
 
@@ -80,7 +80,7 @@ final class Money
     }
 
     /**
-     * Returns a new Money instance based on the current one using the Currency
+     * Returns a new Money instance based on the current one
      *
      * @param string $amount
      *
@@ -113,7 +113,7 @@ final class Money
 
     /**
      * Returns a new Money object that represents
-     * the sum of this and an other Money object
+     * the sum of this and another Money object
      *
      * @param Money $addend
      *
@@ -130,7 +130,7 @@ final class Money
 
     /**
      * Returns a new Money object that represents
-     * the difference of this and an other Money object
+     * the difference of this and another Money object
      *
      * @param Money $subtrahend
      *
@@ -189,7 +189,7 @@ final class Money
     public function round($scale = 0)
     {
         if (!is_int($scale)) {
-            throw new \InvalidArgumentException('Scale is not an integer');
+            throw new InvalidArgumentException('Scale is not an integer');
         }
         $add = '0.'. str_repeat('0', $scale) . '5';
         $newAmount = bcadd($this->amount, $add, $scale);
