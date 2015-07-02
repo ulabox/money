@@ -191,7 +191,7 @@ final class Money
         if (!is_int($scale)) {
             throw new InvalidArgumentException('Scale is not an integer');
         }
-        $add = '0.'. str_repeat('0', $scale) . '5';
+        $add = '0.' . str_repeat('0', $scale) . '5';
         $newAmount = bcadd($this->amount, $add, $scale);
 
         return $this->newInstance($newAmount);
@@ -258,7 +258,7 @@ final class Money
      */
     public function isLessThan(Money $other)
     {
-        return  $this->compareTo($other) === -1;
+        return $this->compareTo($other) === -1;
     }
 
     /**
@@ -326,7 +326,7 @@ final class Money
     {
         $this->assertSameCurrencyAs($other);
 
-        return bccomp($this->amount, $other->amount);
+        return bccomp($this->amount, $other->amount, self::SCALE);
     }
 
     /**
