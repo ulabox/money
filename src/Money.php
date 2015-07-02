@@ -61,7 +61,7 @@ final class Money
     {
         self::assertNumeric($arguments[0]);
 
-        return new self((string) $arguments[0], Currency::fromCode($method));
+        return new self((string)$arguments[0], Currency::fromCode($method));
     }
 
     /**
@@ -76,7 +76,7 @@ final class Money
     {
         self::assertNumeric($amount);
 
-        return new self((string) $amount, $currency);
+        return new self((string)$amount, $currency);
     }
 
     /**
@@ -157,7 +157,7 @@ final class Money
     {
         self::assertNumeric($multiplier);
 
-        $amount = bcmul($this->amount, (string) $multiplier, self::SCALE);
+        $amount = bcmul($this->amount, (string)$multiplier, self::SCALE);
 
         return $this->newInstance($amount);
     }
@@ -174,7 +174,7 @@ final class Money
     {
         self::assertNumeric($divisor);
 
-        $amount = bcdiv($this->amount, (string) $divisor, self::SCALE);
+        $amount = bcdiv($this->amount, (string)$divisor, self::SCALE);
 
         return $this->newInstance($amount);
     }
@@ -191,7 +191,7 @@ final class Money
         if (!is_int($scale)) {
             throw new InvalidArgumentException('Scale is not an integer');
         }
-        $add = '0.'. str_repeat('0', $scale) . '5';
+        $add = '0.' . str_repeat('0', $scale) . '5';
         $newAmount = bcadd($this->amount, $add, $scale);
 
         return $this->newInstance($newAmount);
@@ -210,7 +210,7 @@ final class Money
     {
         self::assertNumeric($conversionRate);
 
-        $amount = bcmul($this->amount, (string) $conversionRate, self::SCALE);
+        $amount = bcmul($this->amount, (string)$conversionRate, self::SCALE);
 
         return new Money($amount, $targetCurrency);
     }
@@ -258,7 +258,7 @@ final class Money
      */
     public function isLessThan(Money $other)
     {
-        return  $this->compareTo($other) === -1;
+        return $this->compareTo($other) === -1;
     }
 
     /**
@@ -326,7 +326,7 @@ final class Money
     {
         $this->assertSameCurrencyAs($other);
 
-        return bccomp($this->amount, $other->amount);
+        return bccomp($this->amount, $other->amount, self::SCALE);
     }
 
     /**
