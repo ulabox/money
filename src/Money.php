@@ -61,7 +61,7 @@ final class Money
     {
         self::assertNumeric($arguments[0]);
 
-        return new self((string)$arguments[0], Currency::fromCode($method));
+        return new self((string) $arguments[0], Currency::fromCode($method));
     }
 
     /**
@@ -76,7 +76,7 @@ final class Money
     {
         self::assertNumeric($amount);
 
-        return new self((string)$amount, $currency);
+        return new self((string) $amount, $currency);
     }
 
     /**
@@ -157,7 +157,7 @@ final class Money
     {
         self::assertNumeric($multiplier);
 
-        $amount = bcmul($this->amount, (string)$multiplier, self::SCALE);
+        $amount = bcmul($this->amount, (string) $multiplier, self::SCALE);
 
         return $this->newInstance($amount);
     }
@@ -174,7 +174,7 @@ final class Money
     {
         self::assertNumeric($divisor);
 
-        $amount = bcdiv($this->amount, (string)$divisor, self::SCALE);
+        $amount = bcdiv($this->amount, (string) $divisor, self::SCALE);
 
         return $this->newInstance($amount);
     }
@@ -210,7 +210,7 @@ final class Money
     {
         self::assertNumeric($conversionRate);
 
-        $amount = bcmul($this->amount, (string)$conversionRate, self::SCALE);
+        $amount = bcmul($this->amount, (string) $conversionRate, self::SCALE);
 
         return new Money($amount, $targetCurrency);
     }
