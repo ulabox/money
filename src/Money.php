@@ -340,7 +340,7 @@ final class Money
      */
     private function compareTo0()
     {
-        return bccomp($this->amount, '');
+        return bccomp($this->amount, '', self::SCALE);
     }
 
     /**

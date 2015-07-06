@@ -274,6 +274,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $euro1 = Money::fromAmount('100', Currency::fromCode('EUR'));
         $euro2 = Money::fromAmount('0', Currency::fromCode('EUR'));
         $euro3 = Money::fromAmount('-100', Currency::fromCode('EUR'));
+        $euro4 = Money::fromAmount('0.0001', Currency::fromCode('EUR'));
 
         $this->assertTrue($euro1->isPositive());
         $this->assertFalse($euro1->isNegative());
@@ -286,6 +287,8 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($euro3->isNegative());
         $this->assertFalse($euro3->isPositive());
         $this->assertFalse($euro3->isZero());
+
+        $this->assertFalse($euro4->isZero());
     }
 
     /**
