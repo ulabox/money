@@ -1,3 +1,6 @@
+### 1.1.2 (2015-07-06)
+  * Fix scale errors in the comparisons (@xeviplana)
+
 ### 1.1.1 (2015-03-03)
   * Fix typos in docs and docblocks
   * Add this CHANGELOG
