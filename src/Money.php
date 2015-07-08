@@ -32,7 +32,6 @@ final class Money
      */
     protected $currency;
 
-
     /**
      * @param string $amount Amount, expressed as a string (eg '10.00')
      * @param Currency $currency
@@ -169,10 +168,14 @@ final class Money
      * @param numeric $divisor
      *
      * @return Money
+     * @throws InvalidArgumentException In case divisor is zero.
      */
     public function divideBy($divisor)
     {
         self::assertNumeric($divisor);
+        if (0 === bccomp((string) $divisor, '', self::SCALE)) {
+            throw new InvalidArgumentException('Divisor cannot be 0.');
+        }
 
         $amount = bcdiv($this->amount, (string) $divisor, self::SCALE);
 

@@ -177,11 +177,40 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $money = Money::fromAmount('30', Currency::fromCode('EUR'));
         $expected1 = Money::fromAmount('15', Currency::fromCode('EUR'));
         $expected2 = Money::fromAmount('3.33333333333', Currency::fromCode('EUR'));
+        $expected3 = Money::fromAmount('-3', Currency::fromCode('EUR'));
 
         $this->assertTrue($money->divideBy(2)->equals($expected1));
         $this->assertTrue($money->divideBy(9)->equals($expected2));
+        $this->assertTrue($money->divideBy(-10)->equals($expected3));
 
         $this->assertNotSame($money, $money->divideBy(2));
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testDivisorIsNumericZero()
+    {
+        $money = Money::fromAmount('30', Currency::fromCode('EUR'));
+        $money->divideBy(0)->amount();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testDivisorIsFloatZero()
+    {
+        $money = Money::fromAmount('30', Currency::fromCode('EUR'));
+        $money->divideBy(0.0)->amount();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testDivisorIsStringZero()
+    {
+        $money = Money::fromAmount('30', Currency::fromCode('EUR'));
+        $money->divideBy('0')->amount();
     }
 
     /**
