@@ -66,7 +66,13 @@ final class Currency
         return $this->code === $other->code;
     }
 
-    public function __toString() {
+    /**
+     * Returns a string representation of the currency, namely its ISO code
+     *
+     * @return string
+     */
+    public function __toString()
+    {
         return $this->code;
     }
 }
