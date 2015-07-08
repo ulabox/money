@@ -1,3 +1,8 @@
+### 1.1.3 (2015-07-08)
+  * Throw an exception when dividing by 0 to avoid a warning (@Hyunk3l)
+  * Fix scale errors in comparisons with 0
+  * Fix typos and correct phpdocs
+
 ### 1.1.2 (2015-07-06)
   * Fix scale errors in the comparisons (@xeviplana)
 
