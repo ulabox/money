@@ -6,7 +6,7 @@ PHP 5.4+ Money library using BCMath, inspired by the works of [Mathias Verraes][
 
 ## Motivation
 
-Representing monetary values using floats is bad, you can lose precicion an get weird results. It's better to use a Money value object that uses integers or BCMath. This library uses the latter.
+Representing monetary values using floats is bad, you can lose precision an get weird results. It's better to use a Money value object that uses integers or BCMath. This library uses the latter.
 
 ### Why another Money library? There are already tons out there!
 
