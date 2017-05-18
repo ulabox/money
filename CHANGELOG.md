@@ -1,3 +1,6 @@
+### 1.1.4 (2017-05-18)
+  * Fix negative rounding issues
+
 ### 1.1.3 (2015-07-08)
   * Throw an exception when dividing by 0 to avoid a warning (@Hyunk3l)
   * Fix scale errors in comparisons with 0
