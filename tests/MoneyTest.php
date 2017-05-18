@@ -244,6 +244,26 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers ::round
+     */
+    public function testRoundWithNegativeAmountNoRounding()
+    {
+        $money = Money::fromAmount('-3.9813', Currency::fromCode('EUR'));
+        $expect = Money::fromAmount('-3.98', Currency::fromCode('EUR'));
+        $this->assertEquals($expect, $money->round(2));
+    }
+
+    /**
+     * @covers ::round
+     */
+    public function testRoundWithNegativeAmountRounding()
+    {
+        $money = Money::fromAmount('-3.9863', Currency::fromCode('EUR'));
+        $expect = Money::fromAmount('-3.99', Currency::fromCode('EUR'));
+        $this->assertEquals($expect, $money->round(2));
+    }
+
+    /**
      * @covers ::convertTo
      */
     public function convertTo()
