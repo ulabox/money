@@ -194,8 +194,7 @@ final class Money
         if (!is_int($scale)) {
             throw new InvalidArgumentException('Scale is not an integer');
         }
-        $add = '0.' . str_repeat('0', $scale) . '5';
-        $newAmount = bcadd($this->amount, $add, $scale);
+        $newAmount = sprintf('%.'.$scale.'f', $this->amount());
 
         return $this->newInstance($newAmount);
     }
