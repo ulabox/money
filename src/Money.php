@@ -38,11 +38,20 @@ final class Money
      *
      * @throws InvalidArgumentException If amount is not a numeric string value
      */
-    private function __construct($amount, Currency $currency)
-    {
-        $this->amount = $amount;
-        $this->currency = $currency;
-    }
+     private function __construct($amount, Currency $currency)
+     {
+         $this->setAmount($amount);
+         $this->currency = $currency;
+     }
+
+     /**
+      * @param string $amount
+      */
+     private function setAmount($amount)
+     {
+         $hasDecimals = (bool) preg_match('/\./', $amount);
+         $this->amount = ($hasDecimals) ? rtrim($amount, "0") : $amount;
+     }
 
     /**
      * Convenience factory method for a Money object

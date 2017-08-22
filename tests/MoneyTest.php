@@ -357,4 +357,13 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(Money::EUR(1)->hasSameCurrencyAs(Money::EUR(1)));
         $this->assertFalse(Money::EUR(1)->hasSameCurrencyAs(Money::USD(1)));
     }
+
+    public function testRemoveUselessZeros()
+    {
+        $money = Money::fromAmount('100.00', Currency::fromCode('EUR'));
+        $this->assertEquals('100', $money->amount());
+
+        $secondMoney = Money::fromAmount('100.7200', Currency::fromCode('EUR'));
+        $this->assertEquals('100.72', $secondMoney->amount());
+    }
 }
