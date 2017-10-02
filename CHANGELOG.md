@@ -1,3 +1,6 @@
+### 1.1.5 (2017-10-02)
+  * Fix precision issues with floats as arguments
+  
 ### 1.1.4 (2017-05-18)
   * Fix negative rounding issues
 
