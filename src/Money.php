@@ -58,9 +58,7 @@ final class Money
      */
     public static function __callStatic($method, $arguments)
     {
-        self::assertNumeric($arguments[0]);
-
-        return new self((string) $arguments[0], Currency::fromCode($method));
+        return self::fromAmount($arguments[0], Currency::fromCode($method));
     }
 
     /**
@@ -75,7 +73,14 @@ final class Money
     {
         self::assertNumeric($amount);
 
-        return new self((string) $amount, $currency);
+        //Properly initialize a bc number
+        //@see https://github.com/php/php-src/pull/2746
+        return new self(
+            is_float($amount) ?
+                number_format($amount, self::SCALE, '.', '') :
+                bcadd($amount, '0', self::SCALE),
+            $currency
+        );
     }
 
     /**

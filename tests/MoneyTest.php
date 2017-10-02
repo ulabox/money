@@ -45,6 +45,13 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($money->equals(Money::EUR('100.000000')));
     }
 
+    public function testInitRoundingsOfFloatAndIntArguments()
+    {
+        $this->assertEquals('0.0001', Money::EUR(0.00009)->amount());
+        $this->assertEquals('0.0000', Money::EUR(0)->amount());
+        $this->assertEquals('0.0000', Money::EUR('0.00009')->amount());
+    }
+
     /**
      * @expectedException Money\InvalidArgumentException
      */
