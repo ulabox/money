@@ -23,7 +23,7 @@ final class Currency
     /**
      * @param string $code
      */
-    private function __construct($code)
+    private function __construct(string $code)
     {
         $this->code = strtoupper($code);
     }
@@ -35,9 +35,9 @@ final class Currency
      *
      * @return Currency
      */
-    public static function fromCode($code)
+    public static function fromCode(string $code)
     {
-        if (!is_string($code) || strlen($code) !== 3) {
+        if (strlen($code) !== 3) {
             throw new InvalidArgumentException('Currency code should be 3 letter ISO code');
         }
 
@@ -49,7 +49,7 @@ final class Currency
      *
      * @return string
      */
-    public function code()
+    public function code(): string
     {
         return $this->code;
     }
@@ -71,7 +71,7 @@ final class Currency
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->code;
     }

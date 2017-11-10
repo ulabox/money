@@ -38,7 +38,7 @@ final class Money
      *
      * @throws InvalidArgumentException If amount is not a numeric string value
      */
-    private function __construct($amount, Currency $currency)
+    private function __construct(string $amount, Currency $currency)
     {
         $this->amount = $amount;
         $this->currency = $currency;
@@ -56,7 +56,7 @@ final class Money
      *
      * @return Money
      */
-    public static function __callStatic($method, $arguments)
+    public static function __callStatic(string $method, array $arguments)
     {
         return self::fromAmount($arguments[0], Currency::fromCode($method));
     }
@@ -90,7 +90,7 @@ final class Money
      *
      * @return Money
      */
-    private function newInstance($amount)
+    private function newInstance(string $amount)
     {
         return new self($amount, $this->currency);
     }
@@ -100,7 +100,7 @@ final class Money
      *
      * @return string
      */
-    public function amount()
+    public function amount(): string
     {
         return $this->amount;
     }
@@ -110,7 +110,7 @@ final class Money
      *
      * @return Currency
      */
-    public function currency()
+    public function currency(): Currency
     {
         return $this->currency;
     }
@@ -123,7 +123,7 @@ final class Money
      *
      * @return Money
      */
-    public function add(Money $addend)
+    public function add(Money $addend): Money
     {
         $this->assertSameCurrencyAs($addend);
 
@@ -140,7 +140,7 @@ final class Money
      *
      * @return Money
      */
-    public function subtract(Money $subtrahend)
+    public function subtract(Money $subtrahend): Money
     {
         $this->assertSameCurrencyAs($subtrahend);
 
@@ -157,7 +157,7 @@ final class Money
      *
      * @return Money
      */
-    public function multiplyBy($multiplier)
+    public function multiplyBy($multiplier): Money
     {
         self::assertNumeric($multiplier);
 
@@ -175,7 +175,7 @@ final class Money
      * @return Money
      * @throws InvalidArgumentException In case divisor is zero.
      */
-    public function divideBy($divisor)
+    public function divideBy($divisor): Money
     {
         self::assertNumeric($divisor);
         if (0 === bccomp((string) $divisor, '', self::SCALE)) {
@@ -194,12 +194,16 @@ final class Money
      *
      * @return Money
      */
-    public function round($scale = 0)
+    public function round($scale = 0): Money
     {
         if (!is_int($scale)) {
             throw new InvalidArgumentException('Scale is not an integer');
         }
-        $newAmount = sprintf('%.'.$scale.'f', $this->amount());
+        $add = '0.' . str_repeat('0', $scale) . '5';
+        if ($this->isNegative()) {
+            $add = '-' . $add;
+        }
+        $newAmount = bcadd($this->amount, $add, $scale);
 
         return $this->newInstance($newAmount);
     }
@@ -213,7 +217,7 @@ final class Money
      *
      * @return Money
      */
-    public function convertTo(Currency $targetCurrency, $conversionRate)
+    public function convertTo(Currency $targetCurrency, $conversionRate): Money
     {
         self::assertNumeric($conversionRate);
 
@@ -227,9 +231,9 @@ final class Money
      *
      * @param Money $other
      *
-     * @return boolean
+     * @return bool
      */
-    public function equals(Money $other)
+    public function equals(Money $other): bool
     {
         return $this->compareTo($other) === 0;
     }
@@ -239,9 +243,9 @@ final class Money
      *
      * @param Money $other
      *
-     * @return boolean
+     * @return bool
      */
-    public function isGreaterThan(Money $other)
+    public function isGreaterThan(Money $other): bool
     {
         return $this->compareTo($other) === 1;
     }
@@ -251,7 +255,7 @@ final class Money
      *
      * @return bool
      */
-    public function isGreaterThanOrEqualTo(Money $other)
+    public function isGreaterThanOrEqualTo(Money $other): bool
     {
         return $this->compareTo($other) >= 0;
     }
@@ -261,9 +265,9 @@ final class Money
      *
      * @param Money $other
      *
-     * @return boolean
+     * @return bool
      */
-    public function isLessThan(Money $other)
+    public function isLessThan(Money $other): bool
     {
         return $this->compareTo($other) === -1;
     }
@@ -273,7 +277,7 @@ final class Money
      *
      * @return bool
      */
-    public function isLessThanOrEqualTo(Money $other)
+    public function isLessThanOrEqualTo(Money $other): bool
     {
         return $this->compareTo($other) <= 0;
     }
@@ -281,9 +285,9 @@ final class Money
     /**
      * Checks if the value represented by this object is zero
      *
-     * @return boolean
+     * @return bool
      */
-    public function isZero()
+    public function isZero(): bool
     {
         return $this->compareTo0() === 0;
     }
@@ -291,9 +295,9 @@ final class Money
     /**
      * Checks if the value represented by this object is positive
      *
-     * @return boolean
+     * @return bool
      */
-    public function isPositive()
+    public function isPositive(): bool
     {
         return $this->compareTo0() === 1;
     }
@@ -301,9 +305,9 @@ final class Money
     /**
      * Checks if the value represented by this object is negative
      *
-     * @return boolean
+     * @return bool
      */
-    public function isNegative()
+    public function isNegative(): bool
     {
         return $this->compareTo0() === -1;
     }
@@ -313,9 +317,9 @@ final class Money
      *
      * @param Money $other
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasSameCurrencyAs(Money $other)
+    public function hasSameCurrencyAs(Money $other): bool
     {
         return $this->currency->equals($other->currency);
     }
@@ -329,7 +333,7 @@ final class Money
      *
      * @return int
      */
-    private function compareTo(Money $other)
+    private function compareTo(Money $other): int
     {
         $this->assertSameCurrencyAs($other);
 
@@ -345,7 +349,7 @@ final class Money
      *
      * @return int
      */
-    private function compareTo0()
+    private function compareTo0(): int
     {
         return bccomp($this->amount, '', self::SCALE);
     }

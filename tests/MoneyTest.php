@@ -11,12 +11,14 @@
 
 namespace Money;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass Money\Money
  * @uses Money\Currency
  * @uses Money\Money
  */
-final class MoneyTest extends \PHPUnit_Framework_TestCase
+final class MoneyTest extends TestCase
 {
     /**
      * @covers ::__callStatic
@@ -24,7 +26,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     public function testFactoryMethod()
     {
         $money = Money::EUR(25);
-        $this->assertInstanceOf('Money\Money', $money);
+        self::assertInstanceOf('Money\Money', $money);
     }
 
     /**
@@ -33,23 +35,23 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     public function testFromAmountAndCurrency()
     {
         $money = Money::fromAmount('100', Currency::fromCode('EUR'));
-        $this->assertInstanceOf('Money\Money', $money);
+        self::assertInstanceOf('Money\Money', $money);
     }
 
     public function testNumericValues()
     {
         $money = Money::EUR('100');
 
-        $this->assertTrue($money->equals(Money::EUR(100)));
-        $this->assertTrue($money->equals(Money::EUR(100.00)));
-        $this->assertTrue($money->equals(Money::EUR('100.000000')));
+        self::assertTrue($money->equals(Money::EUR(100)));
+        self::assertTrue($money->equals(Money::EUR(100.00)));
+        self::assertTrue($money->equals(Money::EUR('100.000000')));
     }
 
     public function testInitRoundingsOfFloatAndIntArguments()
     {
-        $this->assertEquals('0.0001', Money::EUR(0.00009)->amount());
-        $this->assertEquals('0.0000', Money::EUR(0)->amount());
-        $this->assertEquals('0.0000', Money::EUR('0.00009')->amount());
+        self::assertEquals('0.0001', Money::EUR(0.00009)->amount());
+        self::assertEquals('0.0000', Money::EUR(0)->amount());
+        self::assertEquals('0.0000', Money::EUR('0.00009')->amount());
     }
 
     /**
@@ -68,8 +70,8 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     {
         $euro = Currency::fromCode('EUR');
         $money = Money::fromAmount('100', $euro);
-        $this->assertEquals('100', $money->amount());
-        $this->assertEquals($euro, $money->currency());
+        self::assertEquals('100', $money->amount());
+        self::assertEquals($euro, $money->currency());
     }
 
     /**
@@ -82,11 +84,11 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $sum = $m1->add($m2);
         $expected = Money::fromAmount('200', Currency::fromCode('EUR'));
 
-        $this->assertTrue($sum->equals($expected));
+        self::assertTrue($sum->equals($expected));
 
         // Should return a new instance
-        $this->assertNotSame($sum, $m1);
-        $this->assertNotSame($sum, $m2);
+        self::assertNotSame($sum, $m1);
+        self::assertNotSame($sum, $m2);
     }
 
     /**
@@ -99,7 +101,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $sum = $m1->add($m2);
         $expected = Money::fromAmount('100.01', Currency::fromCode('EUR'));
 
-        $this->assertTrue($sum->equals($expected));
+        self::assertTrue($sum->equals($expected));
     }
 
     /**
@@ -122,11 +124,11 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $diff = $m1->subtract($m2);
         $expected = Money::fromAmount('-100', Currency::fromCode('EUR'));
 
-        $this->assertTrue($diff->equals($expected));
+        self::assertTrue($diff->equals($expected));
 
         // Should return a new instance
-        $this->assertNotSame($diff, $m1);
-        $this->assertNotSame($diff, $m2);
+        self::assertNotSame($diff, $m1);
+        self::assertNotSame($diff, $m2);
     }
 
     /**
@@ -139,7 +141,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $diff = $m1->subtract($m2);
         $expected = Money::fromAmount('-99.99', Currency::fromCode('EUR'));
 
-        $this->assertTrue($diff->equals($expected));
+        self::assertTrue($diff->equals($expected));
     }
 
     /**
@@ -161,10 +163,10 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $expected1 = Money::fromAmount('200', Currency::fromCode('EUR'));
         $expected2 = Money::fromAmount('101', Currency::fromCode('EUR'));
 
-        $this->assertTrue($money->multiplyBy(2)->equals($expected1));
-        $this->assertTrue($money->multiplyBy('1.01')->equals($expected2));
+        self::assertTrue($money->multiplyBy(2)->equals($expected1));
+        self::assertTrue($money->multiplyBy('1.01')->equals($expected2));
 
-        $this->assertNotSame($money, $money->multiplyBy(2));
+        self::assertNotSame($money, $money->multiplyBy(2));
     }
 
     /**
@@ -186,11 +188,11 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $expected2 = Money::fromAmount('3.33333333333', Currency::fromCode('EUR'));
         $expected3 = Money::fromAmount('-3', Currency::fromCode('EUR'));
 
-        $this->assertTrue($money->divideBy(2)->equals($expected1));
-        $this->assertTrue($money->divideBy(9)->equals($expected2));
-        $this->assertTrue($money->divideBy(-10)->equals($expected3));
+        self::assertTrue($money->divideBy(2)->equals($expected1));
+        self::assertTrue($money->divideBy(9)->equals($expected2));
+        self::assertTrue($money->divideBy(-10)->equals($expected3));
 
-        $this->assertNotSame($money, $money->divideBy(2));
+        self::assertNotSame($money, $money->divideBy(2));
     }
 
     /**
@@ -229,10 +231,10 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $expected1 = Money::fromAmount('3', Currency::fromCode('EUR'));
         $expected2 = Money::fromAmount('3.33', Currency::fromCode('EUR'));
 
-        $this->assertTrue($money->round()->equals($expected1));
-        $this->assertTrue($money->round(2)->equals($expected2));
+        self::assertTrue($money->round()->equals($expected1));
+        self::assertTrue($money->round(2)->equals($expected2));
 
-        $this->assertNotSame($money, $money->round());
+        self::assertNotSame($money, $money->round());
     }
 
     /**
@@ -244,10 +246,10 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $expected1 = Money::fromAmount('4', Currency::fromCode('EUR'));
         $expected2 = Money::fromAmount('3.98', Currency::fromCode('EUR'));
 
-        $this->assertTrue($money->round()->equals($expected1));
-        $this->assertTrue($money->round(2)->equals($expected2));
+        self::assertTrue($money->round()->equals($expected1));
+        self::assertTrue($money->round(2)->equals($expected2));
 
-        $this->assertNotSame($money, $money->round());
+        self::assertNotSame($money, $money->round());
     }
 
     /**
@@ -257,7 +259,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     {
         $money = Money::fromAmount('-3.9813', Currency::fromCode('EUR'));
         $expect = Money::fromAmount('-3.98', Currency::fromCode('EUR'));
-        $this->assertEquals($expect, $money->round(2));
+        self::assertEquals($expect, $money->round(2));
     }
 
     /**
@@ -267,7 +269,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
     {
         $money = Money::fromAmount('-3.9863', Currency::fromCode('EUR'));
         $expect = Money::fromAmount('-3.99', Currency::fromCode('EUR'));
-        $this->assertEquals($expect, $money->round(2));
+        self::assertEquals($expect, $money->round(2));
     }
 
     /**
@@ -280,7 +282,7 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
 
         $expected = Money::fromAmount('150', $usd);
 
-        $this->assertTrue($money->convertTo($usd, '1.50')->equals($expected));
+        self::assertTrue($money->convertTo($usd, '1.50')->equals($expected));
     }
 
     /**
@@ -300,24 +302,24 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $euro6 = Money::fromAmount('1.1111', Currency::fromCode('EUR'));
         $euro7 = Money::fromAmount('1.2222', Currency::fromCode('EUR'));
 
-        $this->assertTrue($euro2->isGreaterThan($euro1));
-        $this->assertFalse($euro1->isGreaterThan($euro2));
-        $this->assertTrue($euro1->isLessThan($euro2));
-        $this->assertFalse($euro2->isLessThan($euro1));
-        $this->assertTrue($euro1->equals($euro3));
-        $this->assertFalse($euro1->equals($euro2));
-        $this->assertFalse($euro6->equals($euro7));
+        self::assertTrue($euro2->isGreaterThan($euro1));
+        self::assertFalse($euro1->isGreaterThan($euro2));
+        self::assertTrue($euro1->isLessThan($euro2));
+        self::assertFalse($euro2->isLessThan($euro1));
+        self::assertTrue($euro1->equals($euro3));
+        self::assertFalse($euro1->equals($euro2));
+        self::assertFalse($euro6->equals($euro7));
 
-        $this->assertTrue($euro1->isGreaterThanOrEqualTo($euro3));
-        $this->assertTrue($euro1->isLessThanOrEqualTo($euro3));
+        self::assertTrue($euro1->isGreaterThanOrEqualTo($euro3));
+        self::assertTrue($euro1->isLessThanOrEqualTo($euro3));
 
-        $this->assertFalse($euro1->isGreaterThanOrEqualTo($euro2));
-        $this->assertFalse($euro1->isLessThanOrEqualTo($euro4));
+        self::assertFalse($euro1->isGreaterThanOrEqualTo($euro2));
+        self::assertFalse($euro1->isLessThanOrEqualTo($euro4));
 
-        $this->assertTrue($euro4->isLessThanOrEqualTo($euro1));
-        $this->assertTrue($euro4->isGreaterThanOrEqualTo($euro5));
+        self::assertTrue($euro4->isLessThanOrEqualTo($euro1));
+        self::assertTrue($euro4->isGreaterThanOrEqualTo($euro5));
 
-        $this->assertTrue($euro6->isLessThanOrEqualTo($euro7));
+        self::assertTrue($euro6->isLessThanOrEqualTo($euro7));
     }
 
     /**
@@ -332,19 +334,19 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
         $euro3 = Money::fromAmount('-100', Currency::fromCode('EUR'));
         $euro4 = Money::fromAmount('0.0001', Currency::fromCode('EUR'));
 
-        $this->assertTrue($euro1->isPositive());
-        $this->assertFalse($euro1->isNegative());
-        $this->assertFalse($euro1->isZero());
+        self::assertTrue($euro1->isPositive());
+        self::assertFalse($euro1->isNegative());
+        self::assertFalse($euro1->isZero());
 
-        $this->assertTrue($euro2->isZero());
-        $this->assertFalse($euro2->isNegative());
-        $this->assertFalse($euro2->isPositive());
+        self::assertTrue($euro2->isZero());
+        self::assertFalse($euro2->isNegative());
+        self::assertFalse($euro2->isPositive());
 
-        $this->assertTrue($euro3->isNegative());
-        $this->assertFalse($euro3->isPositive());
-        $this->assertFalse($euro3->isZero());
+        self::assertTrue($euro3->isNegative());
+        self::assertFalse($euro3->isPositive());
+        self::assertFalse($euro3->isZero());
 
-        $this->assertFalse($euro4->isZero());
+        self::assertFalse($euro4->isZero());
     }
 
     /**
@@ -360,8 +362,8 @@ final class MoneyTest extends \PHPUnit_Framework_TestCase
      */
     public function testHasSameCurrencyAs()
     {
-        $this->assertTrue(Money::EUR(1)->hasSameCurrencyAs(Money::EUR(100)));
-        $this->assertTrue(Money::EUR(1)->hasSameCurrencyAs(Money::EUR(1)));
-        $this->assertFalse(Money::EUR(1)->hasSameCurrencyAs(Money::USD(1)));
+        self::assertTrue(Money::EUR(1)->hasSameCurrencyAs(Money::EUR(100)));
+        self::assertTrue(Money::EUR(1)->hasSameCurrencyAs(Money::EUR(1)));
+        self::assertFalse(Money::EUR(1)->hasSameCurrencyAs(Money::USD(1)));
     }
 }

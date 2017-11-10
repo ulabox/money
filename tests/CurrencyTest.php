@@ -11,12 +11,14 @@
 
 namespace Money;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass Money\Currency
  * @uses Money\Currency
  * @uses Money\Money
  */
-final class CurrencyTest extends \PHPUnit_Framework_TestCase
+final class CurrencyTest extends TestCase
 {
     /**
      * @covers ::__construct
@@ -25,7 +27,7 @@ final class CurrencyTest extends \PHPUnit_Framework_TestCase
     {
         $currency = Currency::fromCode('EUR');
 
-        $this->assertEquals('EUR', $currency->code());
+        self::assertEquals('EUR', $currency->code());
     }
 
     /**
@@ -35,8 +37,8 @@ final class CurrencyTest extends \PHPUnit_Framework_TestCase
     public function testCode()
     {
         $currency = Currency::fromCode('EUR');
-        $this->assertEquals('EUR', $currency->code());
-        $this->assertEquals('EUR', (string) $currency);
+        self::assertEquals('EUR', $currency->code());
+        self::assertEquals('EUR', (string) $currency);
     }
 
     /**
@@ -48,8 +50,8 @@ final class CurrencyTest extends \PHPUnit_Framework_TestCase
         $c2 = Currency::fromCode('EUR');
         $c3 = Currency::fromCode('USD');
         $c4 = Currency::fromCode('USD');
-        $this->assertTrue($c1->equals($c2));
-        $this->assertTrue($c3->equals($c4));
+        self::assertTrue($c1->equals($c2));
+        self::assertTrue($c3->equals($c4));
     }
 
     /**
@@ -59,7 +61,7 @@ final class CurrencyTest extends \PHPUnit_Framework_TestCase
     {
         $c1 = Currency::fromCode('EUR');
         $c2 = Currency::fromCode('USD');
-        $this->assertFalse($c1->equals($c2));
+        self::assertFalse($c1->equals($c2));
     }
 
     /**
@@ -69,7 +71,7 @@ final class CurrencyTest extends \PHPUnit_Framework_TestCase
     {
         $c1 = Currency::fromCode('EUR');
         $c2 = Currency::fromCode('eur');
-        $this->assertTrue($c1->equals($c2));
+        self::assertTrue($c1->equals($c2));
     }
 
     /**
