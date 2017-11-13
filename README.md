@@ -2,7 +2,7 @@
 
 [![Build Status](https://api.travis-ci.org/ulabox/money.png?branch=master)](http://travis-ci.org/ulabox/money)
 
-PHP 5.4+ Money library using BCMath, inspired by the works of [Mathias Verraes][2] and [Commerce Guys][3]
+PHP 7.1+ Money library using BCMath, inspired by the works of [Mathias Verraes][2] and [Commerce Guys][3]. Use 1.x series for PHP 5.4+ compatibility.
 
 ## Motivation
 
@@ -40,6 +40,12 @@ assert($fifteenEUR->isGreaterThan($tenEUR));
 assert($fifteenEUR->equals(Money::EUR('15.00')));
 
 ```
+## Dynamic scale
+
+Since version 2.x, the scale of the underlying BCMath operations can be changed to suit your needs.
+
+By default the scale of the Money class is 4. You can modify the scale when you create the Money object or when you multiply and divide. The scale is also changed when you round a number. For addition and subtraction operations, the scale used is the biggest between the 2 operands. 
+
 ## Integration with Doctrine 2.5
 
 Starting from version 2.5 Doctrine supports working with Value Objects in what they call [Embeddables][5]. Bear in mind that this Money object has also a Currency VO inside, this is an embeddable inside an embeddable. Doctrine should work just fine with nested embeddables.
@@ -67,7 +73,6 @@ Money\Currency
     code: { type: string, length: 3 }
 
 ```
- 
 ## Disclaimer
 
 We aim to keep this library as simple as possible. That means we don't see the need of having plenty of calculation operations inside the Money class, keep that in mind if you plan to spend some valuable time in a PR! But of course, this can change as we see fit :p

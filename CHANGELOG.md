@@ -1,3 +1,10 @@
+### 2.0.0 (2017-11-13)
+  * PHP 7.1 is the minimum requirement
+  * Configurable scale
+  * Rounding now changes the scale of the number
+    * Before: '0.0050'->round(2) => '0.0100'
+    * Now: '0.0050'->round(2) => '0.10'
+  
 ### 1.1.5 (2017-10-02)
   * Fix precision issues with floats as arguments
   
