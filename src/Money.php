@@ -3,7 +3,7 @@
 /**
  * This file is part of the Ulabox Money library.
  *
- * Copyright (c) 2011-2015 Ulabox SL
+ * Copyright (c) 2011-2017 Ulabox SL
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,34 +14,43 @@ namespace Money;
 final class Money
 {
     /**
-     * The scale used in BCMath calculations
+     * The default scale used in BCMath calculations
      */
-    const SCALE = 4;
+    public const DEFAULT_SCALE = 4;
 
     /**
      * The money amount
      *
      * @var string
      */
-    protected $amount;
+    private $amount;
 
     /**
      * The amount currency
      *
      * @var Currency
      */
-    protected $currency;
+    private $currency;
+
+    /**
+     * The money scale
+     *
+     * @var int
+     */
+    private $scale = self::DEFAULT_SCALE;
 
     /**
      * @param string $amount Amount, expressed as a string (eg '10.00')
      * @param Currency $currency
+     * @param int $scale
      *
      * @throws InvalidArgumentException If amount is not a numeric string value
      */
-    private function __construct(string $amount, Currency $currency)
+    private function __construct(string $amount, Currency $currency, int $scale)
     {
         $this->amount = $amount;
         $this->currency = $currency;
+        $this->scale = $scale;
     }
 
     /**
@@ -58,7 +67,7 @@ final class Money
      */
     public static function __callStatic(string $method, array $arguments)
     {
-        return self::fromAmount($arguments[0], Currency::fromCode($method));
+        return self::fromAmount($arguments[0], Currency::fromCode($method), $arguments[1] ?? self::DEFAULT_SCALE);
     }
 
     /**
@@ -66,10 +75,11 @@ final class Money
      *
      * @param numeric $amount
      * @param Currency $currency
+     * @param int $scale
      *
      * @return Money
      */
-    public static function fromAmount($amount, Currency $currency)
+    public static function fromAmount($amount, Currency $currency, int $scale = self::DEFAULT_SCALE)
     {
         self::assertNumeric($amount);
 
@@ -77,9 +87,10 @@ final class Money
         //@see https://github.com/php/php-src/pull/2746
         return new self(
             is_float($amount) ?
-                number_format($amount, self::SCALE, '.', '') :
-                bcadd($amount, '0', self::SCALE),
-            $currency
+                number_format($amount, $scale, '.', '') :
+                bcadd($amount, '0', $scale),
+            $currency,
+            $scale
         );
     }
 
@@ -87,12 +98,13 @@ final class Money
      * Returns a new Money instance based on the current one
      *
      * @param string $amount
+     * @param int $scale
      *
      * @return Money
      */
-    private function newInstance(string $amount)
+    private function newInstance(string $amount, int $scale)
     {
-        return new self($amount, $this->currency);
+        return new self($amount, $this->currency, $scale);
     }
 
     /**
@@ -127,9 +139,10 @@ final class Money
     {
         $this->assertSameCurrencyAs($addend);
 
-        $amount = bcadd($this->amount, $addend->amount, self::SCALE);
+        $scale = $this->maxScale($addend);
+        $amount = bcadd($this->amount, $addend->amount, $scale);
 
-        return $this->newInstance($amount);
+        return $this->newInstance($amount, $scale);
     }
 
     /**
@@ -144,9 +157,10 @@ final class Money
     {
         $this->assertSameCurrencyAs($subtrahend);
 
-        $amount = bcsub($this->amount, $subtrahend->amount, self::SCALE);
+        $scale = $this->maxScale($subtrahend);
+        $amount = bcsub($this->amount, $subtrahend->amount, $scale);
 
-        return $this->newInstance($amount);
+        return $this->newInstance($amount, $scale);
     }
 
     /**
@@ -154,16 +168,18 @@ final class Money
      * the multiplied value by the given factor
      *
      * @param numeric $multiplier
+     * @param int $scale
      *
      * @return Money
      */
-    public function multiplyBy($multiplier): Money
+    public function multiplyBy($multiplier, int $scale = null): Money
     {
         self::assertNumeric($multiplier);
 
-        $amount = bcmul($this->amount, (string) $multiplier, self::SCALE);
+        $scale = $scale ?: $this->scale;
+        $amount = bcmul($this->amount, (string) $multiplier, $scale);
 
-        return $this->newInstance($amount);
+        return $this->newInstance($amount, $scale);
     }
 
     /**
@@ -171,41 +187,41 @@ final class Money
      * the divided value by the given factor
      *
      * @param numeric $divisor
+     * @param int $scale
      *
      * @return Money
      * @throws InvalidArgumentException In case divisor is zero.
      */
-    public function divideBy($divisor): Money
+    public function divideBy($divisor, int $scale = null): Money
     {
         self::assertNumeric($divisor);
-        if (0 === bccomp((string) $divisor, '', self::SCALE)) {
+
+        $scale = $scale ?: $this->scale;
+        if (0 === bccomp((string) $divisor, '0', $scale)) {
             throw new InvalidArgumentException('Divisor cannot be 0.');
         }
 
-        $amount = bcdiv($this->amount, (string) $divisor, self::SCALE);
+        $amount = bcdiv($this->amount, (string) $divisor, $scale);
 
-        return $this->newInstance($amount);
+        return $this->newInstance($amount, $scale);
     }
 
     /**
      * Rounds this Money to another scale
      *
-     * @param integer $scale
+     * @param int $scale
      *
      * @return Money
      */
-    public function round($scale = 0): Money
+    public function round(int $scale = 0): Money
     {
-        if (!is_int($scale)) {
-            throw new InvalidArgumentException('Scale is not an integer');
-        }
         $add = '0.' . str_repeat('0', $scale) . '5';
         if ($this->isNegative()) {
             $add = '-' . $add;
         }
         $newAmount = bcadd($this->amount, $add, $scale);
 
-        return $this->newInstance($newAmount);
+        return $this->newInstance($newAmount, $scale);
     }
 
     /**
@@ -221,7 +237,7 @@ final class Money
     {
         self::assertNumeric($conversionRate);
 
-        $amount = bcmul($this->amount, (string) $conversionRate, self::SCALE);
+        $amount = bcmul($this->amount, (string) $conversionRate, $this->scale);
 
         return new Money($amount, $targetCurrency);
     }
@@ -337,7 +353,7 @@ final class Money
     {
         $this->assertSameCurrencyAs($other);
 
-        return bccomp($this->amount, $other->amount, self::SCALE);
+        return bccomp($this->amount, $other->amount, $this->maxScale($other));
     }
 
     /**
@@ -351,7 +367,18 @@ final class Money
      */
     private function compareTo0(): int
     {
-        return bccomp($this->amount, '', self::SCALE);
+        return bccomp($this->amount, '0', $this->scale);
+    }
+
+    /**
+     * Returns the largest scale between 2 Money objects
+     *
+     * @param Money $other
+     * @return int
+     */
+    private function maxScale(Money $other): int
+    {
+        return max($this->scale, $other->scale);
     }
 
     /**

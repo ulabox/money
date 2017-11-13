@@ -3,7 +3,7 @@
 /**
  * This file is part of the Ulabox Money library.
  *
- * Copyright (c) 2011-2015 Ulabox SL
+ * Copyright (c) 2011-2017 Ulabox SL
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -52,6 +52,14 @@ final class MoneyTest extends TestCase
         self::assertEquals('0.0001', Money::EUR(0.00009)->amount());
         self::assertEquals('0.0000', Money::EUR(0)->amount());
         self::assertEquals('0.0000', Money::EUR('0.00009')->amount());
+    }
+
+    public function testScale()
+    {
+        self::assertSame('0.0000', Money::EUR(0)->amount());
+        self::assertSame('0.0', Money::EUR(0, 1)->amount());
+        self::assertSame('0.0000000000', Money::EUR(0, 10)->amount());
+        self::assertSame('0.0100000000', Money::EUR(0.01, 10)->amount());
     }
 
     /**
@@ -258,8 +266,7 @@ final class MoneyTest extends TestCase
     public function testRoundWithNegativeAmountNoRounding()
     {
         $money = Money::fromAmount('-3.9813', Currency::fromCode('EUR'));
-        $expect = Money::fromAmount('-3.98', Currency::fromCode('EUR'));
-        self::assertEquals($expect, $money->round(2));
+        self::assertSame('-3.98', $money->round(2)->amount());
     }
 
     /**
@@ -268,8 +275,7 @@ final class MoneyTest extends TestCase
     public function testRoundWithNegativeAmountRounding()
     {
         $money = Money::fromAmount('-3.9863', Currency::fromCode('EUR'));
-        $expect = Money::fromAmount('-3.99', Currency::fromCode('EUR'));
-        self::assertEquals($expect, $money->round(2));
+        self::assertSame('-3.99', $money->round(2)->amount());
     }
 
     /**
