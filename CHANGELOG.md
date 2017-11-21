@@ -1,3 +1,6 @@
+### 2.1.0 (2017-11-21)
+  * Add rounding option to multiply and divide operations
+
 ### 2.0.0 (2017-11-13)
   * PHP 7.1 is the minimum requirement
   * Configurable scale
