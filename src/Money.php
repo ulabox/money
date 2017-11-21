@@ -81,17 +81,29 @@ final class Money
      */
     public static function fromAmount($amount, Currency $currency, int $scale = self::DEFAULT_SCALE)
     {
-        self::assertNumeric($amount);
-
         //Properly initialize a bc number
         //@see https://github.com/php/php-src/pull/2746
         return new self(
-            is_float($amount) ?
-                number_format($amount, $scale, '.', '') :
-                bcadd($amount, '0', $scale),
+            self::initNumeric($amount, $scale),
             $currency,
             $scale
         );
+    }
+
+    /**
+     * Properly init a number for BCMath
+     * @param numeric $amount
+     * @param int $scale
+     * @return string
+     */
+    private static function initNumeric($amount, int $scale): string
+    {
+        self::assertNumeric($amount);
+
+        return is_float($amount) ?
+            number_format($amount, $scale, '.', '') :
+            bcadd($amount, '0', $scale)
+        ;
     }
 
     /**
@@ -169,17 +181,25 @@ final class Money
      *
      * @param numeric $multiplier
      * @param int $scale
+     * @param bool $round
      *
      * @return Money
      */
-    public function multiplyBy($multiplier, int $scale = null): Money
+    public function multiplyBy($multiplier, int $scale = null, bool $round = false): Money
     {
-        self::assertNumeric($multiplier);
+        $scale = null === $scale ? $this->scale : $scale;
+        if ($round) {
+            ++$scale;
+        }
+        $multiplier = self::initNumeric($multiplier, $scale);
 
-        $scale = $scale ?: $this->scale;
-        $amount = bcmul($this->amount, (string) $multiplier, $scale);
+        $amount = bcmul($this->amount, $multiplier, $scale);
+        $money = $this->newInstance($amount, $scale);
 
-        return $this->newInstance($amount, $scale);
+        return $round ?
+            $money->round(--$scale) :
+            $money
+        ;
     }
 
     /**
@@ -188,22 +208,30 @@ final class Money
      *
      * @param numeric $divisor
      * @param int $scale
+     * @param bool $round
      *
      * @return Money
      * @throws InvalidArgumentException In case divisor is zero.
      */
-    public function divideBy($divisor, int $scale = null): Money
+    public function divideBy($divisor, int $scale = null, bool $round = false): Money
     {
-        self::assertNumeric($divisor);
+        $scale = null === $scale ? $this->scale : $scale;
+        if ($round) {
+            ++$scale;
+        }
+        $divisor = self::initNumeric($divisor, $scale);
 
-        $scale = $scale ?: $this->scale;
-        if (0 === bccomp((string) $divisor, '0', $scale)) {
+        if (0 === bccomp($divisor, '0', $scale)) {
             throw new InvalidArgumentException('Divisor cannot be 0.');
         }
 
-        $amount = bcdiv($this->amount, (string) $divisor, $scale);
+        $amount = bcdiv($this->amount, $divisor, $scale);
+        $money = $this->newInstance($amount, $scale);
 
-        return $this->newInstance($amount, $scale);
+        return $round ?
+            $money->round(--$scale) :
+            $money
+            ;
     }
 
     /**
@@ -235,11 +263,11 @@ final class Money
      */
     public function convertTo(Currency $targetCurrency, $conversionRate): Money
     {
-        self::assertNumeric($conversionRate);
+        $conversionRate = self::initNumeric($conversionRate, $this->scale);
 
-        $amount = bcmul($this->amount, (string) $conversionRate, $this->scale);
+        $amount = bcmul($this->amount, $conversionRate);
 
-        return new Money($amount, $targetCurrency);
+        return new self($amount, $targetCurrency, $this->scale);
     }
 
     /**
