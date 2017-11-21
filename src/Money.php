@@ -73,7 +73,7 @@ final class Money
     /**
      * Creates a Money object from its amount and currency
      *
-     * @param numeric $amount
+     * @param int|float|string $amount
      * @param Currency $currency
      * @param int $scale
      *
@@ -92,7 +92,7 @@ final class Money
 
     /**
      * Properly init a number for BCMath
-     * @param numeric $amount
+     * @param int|float|string $amount
      * @param int $scale
      * @return string
      */
@@ -179,7 +179,7 @@ final class Money
      * Returns a new Money object that represents
      * the multiplied value by the given factor
      *
-     * @param numeric $multiplier
+     * @param int|float|string $multiplier
      * @param int $scale
      * @param bool $round
      *
@@ -206,7 +206,7 @@ final class Money
      * Returns a new Money object that represents
      * the divided value by the given factor
      *
-     * @param numeric $divisor
+     * @param int|float|string $divisor
      * @param int $scale
      * @param bool $round
      *
@@ -257,7 +257,7 @@ final class Money
      * a given target currency with a given conversion rate
      *
      * @param Currency $targetCurrency
-     * @param numeric $conversionRate
+     * @param int|float|string $conversionRate
      *
      * @return Money
      */
@@ -426,7 +426,7 @@ final class Money
     /**
      * Asserts that a value is a valid numeric string
      *
-     * @param numeric $value
+     * @param int|float|string $value
      *
      * @throws InvalidArgumentException If $other has a different currency
      */
