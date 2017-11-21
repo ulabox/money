@@ -13,8 +13,8 @@
     </testsuites>
 
     <filter>
-        <whitelist>
-            <directory>./tests/</directory>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src/</directory>
         </whitelist>
     </filter>
 </phpunit>

@@ -13,25 +13,14 @@ namespace Money;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass Money\Money
- * @uses Money\Currency
- * @uses Money\Money
- */
 final class MoneyTest extends TestCase
 {
-    /**
-     * @covers ::__callStatic
-     */
     public function testFactoryMethod()
     {
         $money = Money::EUR(25);
         self::assertInstanceOf('Money\Money', $money);
     }
 
-    /**
-     * @covers ::fromAmount
-     */
     public function testFromAmountAndCurrency()
     {
         $money = Money::fromAmount('100', Currency::fromCode('EUR'));
@@ -62,18 +51,13 @@ final class MoneyTest extends TestCase
         self::assertSame('0.0100000000', Money::EUR(0.01, 10)->amount());
     }
 
-    /**
-     * @expectedException Money\InvalidArgumentException
-     */
     public function testNonNumericStringsThrowException()
     {
+        self::expectException(InvalidArgumentException::class);
+
         Money::EUR('Foo');
     }
 
-    /**
-     * @covers ::amount
-     * @covers ::currency
-     */
     public function testGetters()
     {
         $euro = Currency::fromCode('EUR');
@@ -82,9 +66,6 @@ final class MoneyTest extends TestCase
         self::assertEquals($euro, $money->currency());
     }
 
-    /**
-     * @covers ::add
-     */
     public function testAddition()
     {
         $m1 = Money::fromAmount('100', Currency::fromCode('EUR'));
@@ -99,9 +80,6 @@ final class MoneyTest extends TestCase
         self::assertNotSame($sum, $m2);
     }
 
-    /**
-     * @covers ::add
-     */
     public function testAdditionWithDecimals()
     {
         $m1 = Money::fromAmount('100', Currency::fromCode('EUR'));
@@ -112,19 +90,15 @@ final class MoneyTest extends TestCase
         self::assertTrue($sum->equals($expected));
     }
 
-    /**
-     * @expectedException Money\InvalidArgumentException
-     */
     public function testDifferentCurrenciesCannotBeAdded()
     {
+        self::expectException(InvalidArgumentException::class);
+
         $m1 = Money::fromAmount('100', Currency::fromCode('EUR'));
         $m2 = Money::fromAmount('100', Currency::fromCode('USD'));
         $m1->add($m2);
     }
 
-    /**
-     * @covers ::subtract
-     */
     public function testSubtraction()
     {
         $m1 = Money::fromAmount('100', Currency::fromCode('EUR'));
@@ -139,9 +113,6 @@ final class MoneyTest extends TestCase
         self::assertNotSame($diff, $m2);
     }
 
-    /**
-     * @covers ::subtract
-     */
     public function testSubtractionWithDecimals()
     {
         $m1 = Money::fromAmount('100.01', Currency::fromCode('EUR'));
@@ -152,87 +123,84 @@ final class MoneyTest extends TestCase
         self::assertTrue($diff->equals($expected));
     }
 
-    /**
-     * @expectedException Money\InvalidArgumentException
-     */
     public function testDifferentCurrenciesCannotBeSubtracted()
     {
+        self::expectException(InvalidArgumentException::class);
+
         $m1 = Money::fromAmount('100', Currency::fromCode('EUR'));
         $m2 = Money::fromAmount('100', Currency::fromCode('USD'));
         $m1->subtract($m2);
     }
 
-    /**
-     * @covers ::multiplyBy
-     */
     public function testMultiplication()
     {
         $money = Money::fromAmount('100', Currency::fromCode('EUR'));
-        $expected1 = Money::fromAmount('200', Currency::fromCode('EUR'));
-        $expected2 = Money::fromAmount('101', Currency::fromCode('EUR'));
 
-        self::assertTrue($money->multiplyBy(2)->equals($expected1));
-        self::assertTrue($money->multiplyBy('1.01')->equals($expected2));
+        self::assertSame('200.0000', $money->multiplyBy(2)->amount());
+        self::assertSame('101.00', $money->multiplyBy('1.01', 2)->amount());
 
         self::assertNotSame($money, $money->multiplyBy(2));
     }
 
-    /**
-     * @expectedException Money\InvalidArgumentException
-     */
+    public function testMultiplicationWithRounding()
+    {
+        $money = Money::fromAmount('0.3333', Currency::fromCode('EUR'));
+
+        self::assertSame('0', $money->multiplyBy(3, 0, false)->amount());
+        self::assertSame('1', $money->multiplyBy(3, 0, true)->amount());
+    }
+
     public function testInvalidMultiplicationOperand()
     {
+        self::expectException(InvalidArgumentException::class);
+
         $money = Money::fromAmount('100', Currency::fromCode('EUR'));
         $money->multiplyBy('operand');
     }
 
-    /**
-     * @covers ::divideBy
-     */
     public function testDivision()
     {
         $money = Money::fromAmount('30', Currency::fromCode('EUR'));
-        $expected1 = Money::fromAmount('15', Currency::fromCode('EUR'));
-        $expected2 = Money::fromAmount('3.33333333333', Currency::fromCode('EUR'));
-        $expected3 = Money::fromAmount('-3', Currency::fromCode('EUR'));
 
-        self::assertTrue($money->divideBy(2)->equals($expected1));
-        self::assertTrue($money->divideBy(9)->equals($expected2));
-        self::assertTrue($money->divideBy(-10)->equals($expected3));
+        self::assertSame('15.0000', $money->divideBy(2)->amount());
+        self::assertSame('3.3333333333', $money->divideBy(9, 10)->amount());
+        self::assertSame('-3.00', $money->divideBy(-10, 2)->amount());
 
         self::assertNotSame($money, $money->divideBy(2));
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
+    public function testDivisionWithRounding()
+    {
+        $money = Money::fromAmount('5.24', Currency::fromCode('EUR'));
+
+        self::assertSame('0.0069866', $money->divideBy(750, 7)->amount());
+        self::assertSame('0.0069867', $money->divideBy(750, 7, true)->amount());
+    }
+
     public function testDivisorIsNumericZero()
     {
+        self::expectException(InvalidArgumentException::class);
+
         $money = Money::fromAmount('30', Currency::fromCode('EUR'));
         $money->divideBy(0)->amount();
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testDivisorIsFloatZero()
     {
+        self::expectException(InvalidArgumentException::class);
+
         $money = Money::fromAmount('30', Currency::fromCode('EUR'));
         $money->divideBy(0.0)->amount();
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testDivisorIsStringZero()
     {
+        self::expectException(InvalidArgumentException::class);
+
         $money = Money::fromAmount('30', Currency::fromCode('EUR'));
         $money->divideBy('0')->amount();
     }
 
-    /**
-     * @covers ::round
-     */
     public function testRoundWithoutRounding()
     {
         $money = Money::fromAmount('3.33333333333', Currency::fromCode('EUR'));
@@ -245,9 +213,6 @@ final class MoneyTest extends TestCase
         self::assertNotSame($money, $money->round());
     }
 
-    /**
-     * @covers ::round
-     */
     public function testRoundWithRounding()
     {
         $money = Money::fromAmount('3.9843', Currency::fromCode('EUR'));
@@ -260,28 +225,19 @@ final class MoneyTest extends TestCase
         self::assertNotSame($money, $money->round());
     }
 
-    /**
-     * @covers ::round
-     */
     public function testRoundWithNegativeAmountNoRounding()
     {
         $money = Money::fromAmount('-3.9813', Currency::fromCode('EUR'));
         self::assertSame('-3.98', $money->round(2)->amount());
     }
 
-    /**
-     * @covers ::round
-     */
     public function testRoundWithNegativeAmountRounding()
     {
         $money = Money::fromAmount('-3.9863', Currency::fromCode('EUR'));
         self::assertSame('-3.99', $money->round(2)->amount());
     }
 
-    /**
-     * @covers ::convertTo
-     */
-    public function convertTo()
+    public function testConvertTo()
     {
         $money = Money::fromAmount('100', Currency::fromCode('EUR'));
         $usd = Currency::fromCode('USD');
@@ -291,13 +247,6 @@ final class MoneyTest extends TestCase
         self::assertTrue($money->convertTo($usd, '1.50')->equals($expected));
     }
 
-    /**
-     * @covers ::isGreaterThan
-     * @covers ::isGreaterThanOrEqualTo
-     * @covers ::isLessThan
-     * @covers ::isLessThanOrEqualTo
-     * @covers ::equals
-     */
     public function testComparison()
     {
         $euro1 = Money::fromAmount('100', Currency::fromCode('EUR'));
@@ -328,11 +277,6 @@ final class MoneyTest extends TestCase
         self::assertTrue($euro6->isLessThanOrEqualTo($euro7));
     }
 
-    /**
-     * @covers ::isPositive
-     * @covers ::isNegative
-     * @covers ::isZero
-     */
     public function testPositivity()
     {
         $euro1 = Money::fromAmount('100', Currency::fromCode('EUR'));
@@ -355,17 +299,13 @@ final class MoneyTest extends TestCase
         self::assertFalse($euro4->isZero());
     }
 
-    /**
-     * @expectedException Money\InvalidArgumentException
-     */
     public function testDifferentCurrenciesCannotBeCompared()
     {
+        self::expectException(InvalidArgumentException::class);
+
         Money::EUR(1)->equals(Money::USD(1));
     }
 
-    /**
-     * @covers ::hasSameCurrencyAs
-     */
     public function testHasSameCurrencyAs()
     {
         self::assertTrue(Money::EUR(1)->hasSameCurrencyAs(Money::EUR(100)));

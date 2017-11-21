@@ -13,16 +13,8 @@ namespace Money;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @coversDefaultClass Money\Currency
- * @uses Money\Currency
- * @uses Money\Money
- */
 final class CurrencyTest extends TestCase
 {
-    /**
-     * @covers ::__construct
-     */
     public function testConstructor()
     {
         $currency = Currency::fromCode('EUR');
@@ -30,10 +22,6 @@ final class CurrencyTest extends TestCase
         self::assertEquals('EUR', $currency->code());
     }
 
-    /**
-     * @covers ::code
-     * @covers ::__toString
-     */
     public function testCode()
     {
         $currency = Currency::fromCode('EUR');
@@ -41,9 +29,6 @@ final class CurrencyTest extends TestCase
         self::assertEquals('EUR', (string) $currency);
     }
 
-    /**
-     * @covers ::equals
-     */
     public function testDifferentInstancesAreEqual()
     {
         $c1 = Currency::fromCode('EUR');
@@ -54,9 +39,6 @@ final class CurrencyTest extends TestCase
         self::assertTrue($c3->equals($c4));
     }
 
-    /**
-     * @covers ::equals
-     */
     public function testDifferentCurrenciesAreNotEqual()
     {
         $c1 = Currency::fromCode('EUR');
@@ -64,9 +46,6 @@ final class CurrencyTest extends TestCase
         self::assertFalse($c1->equals($c2));
     }
 
-    /**
-     * @covers ::equals
-     */
     public function testToUpper()
     {
         $c1 = Currency::fromCode('EUR');
@@ -74,19 +53,17 @@ final class CurrencyTest extends TestCase
         self::assertTrue($c1->equals($c2));
     }
 
-    /**
-     * @expectedException Money\InvalidArgumentException
-     */
     public function testNonStringCode()
     {
+        self::expectException(InvalidArgumentException::class);
+
         Currency::fromCode(1234);
     }
 
-    /**
-     * @expectedException Money\InvalidArgumentException
-     */
     public function testNon3LetterCode()
     {
+        self::expectException(InvalidArgumentException::class);
+
         Currency::fromCode('FooBar');
     }
 }
