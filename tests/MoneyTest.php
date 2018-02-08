@@ -330,7 +330,7 @@ final class MoneyTest extends TestCase
     public function testNonInvalidStringFormatTrowInvalidArgumentException()
     {
         $string = 'invalid-string';
-        self::setExpectedException(\InvalidArgumentException::class);
+        self::expectException(\InvalidArgumentException::class);
         Money::fromString($string);
     }
 }
