@@ -90,6 +90,20 @@ final class Money
         );
     }
 
+    public static function fromString(string $value): self
+    {
+        try {
+            list($amount, $currencyCode) = explode(':', $value);
+            $currency = Currency::fromCode($currencyCode);
+            $numberAndDecimals = explode('.', $amount);
+            $scale = sizeof($numberAndDecimals) == 1 ? 0 : strlen($numberAndDecimals[1]);
+
+            return new self($amount, $currency, $scale);
+        } catch (\Throwable $e) {
+            throw new \InvalidArgumentException('Value should have format "amount[.decimals]:currency"');
+        }
+    }
+
     /**
      * Properly init a number for BCMath
      * @param int|float|string $amount
@@ -366,6 +380,14 @@ final class Money
     public function hasSameCurrencyAs(Money $other): bool
     {
         return $this->currency->equals($other->currency);
+    }
+
+    public function __toString(): string
+    {
+        // fill with 0s until scale
+        $amount = bcadd($this->amount, '0', $this->scale);
+
+        return "$amount:$this->currency";
     }
 
     /**
