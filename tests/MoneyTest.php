@@ -312,4 +312,25 @@ final class MoneyTest extends TestCase
         self::assertTrue(Money::EUR(1)->hasSameCurrencyAs(Money::EUR(1)));
         self::assertFalse(Money::EUR(1)->hasSameCurrencyAs(Money::USD(1)));
     }
+
+    public function testConvertToString()
+    {
+        $money = Money::EUR('100.0001');
+        $expect = '100.0001:EUR';
+        self::assertEquals($expect, (string) $money);
+    }
+
+    public function testConvertFromString()
+    {
+        $money = Money::USD('100.0001');
+        $string = (string) $money;
+        self::assertEquals($money, Money::fromString($string));
+    }
+
+    public function testNonInvalidStringFormatTrowInvalidArgumentException()
+    {
+        $string = 'invalid-string';
+        self::setExpectedException(\InvalidArgumentException::class);
+        Money::fromString($string);
+    }
 }
